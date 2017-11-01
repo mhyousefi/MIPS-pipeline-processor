@@ -10,7 +10,7 @@ module regFile #(parameter integer SIZE = 32) (clk, rst, src1, src2, dest, write
   always @ (negedge clk) begin
     if (rst) begin
       for (i = 0; i < SIZE; i = i + 1)
-        regMem[i] <= 0;
+        regMem[i] <= 32'd2;
 	 end
 
     else if (writeVal) regMem[dest] <= writeVal;

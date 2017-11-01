@@ -3,10 +3,12 @@ module EXE2MEM (clk, rst, WB_EN_IN, MEM_R_EN_IN, MEM_W_EN_IN, PCIn, ALUResIn, ST
   input clk, rst;
   // TO BE REGISTERED FOR ID STAGE
   input WB_EN_IN, MEM_R_EN_IN, MEM_W_EN_IN;
-  input [31:0] PCIn, ALUResIn, STValIn, destIn;
+  input [4:0] destIn;
+  input [31:0] PCIn, ALUResIn, STValIn;
   // REGISTERED VALUES FOR ID STAGE
   output reg WB_EN, MEM_R_EN, MEM_W_EN;
-  output reg [31:0] PC, ALURes, STVal, dest;
+  output reg [4:0] dest;
+  output reg [31:0] PC, ALURes, STVal;
 
   always @ (posedge clk) begin
     if (rst) begin

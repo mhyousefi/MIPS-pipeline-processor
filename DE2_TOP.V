@@ -1,50 +1,3 @@
-// ============================================================================
-// Copyright (c) 2012 by Terasic Technologies Inc.
-// ============================================================================
-//
-// Permission:
-//
-//   Terasic grants permission to use and modify this code for use
-//   in synthesis for all Terasic Development Boards and Altera Development
-//   Kits made by Terasic.  Other use of this code, including the selling
-//   ,duplication, or modification of any portion is strictly prohibited.
-//
-// Disclaimer:
-//
-//   This VHDL/Verilog or C/C++ source code is intended as a design reference
-//   which illustrates how these types of functions can be implemented.
-//   It is the user's responsibility to verify their design for
-//   consistency and functionality through the use of formal
-//   verification methods.  Terasic provides no warranty regarding the use
-//   or functionality of this code.
-//
-// ============================================================================
-//
-//  Terasic Technologies Inc
-//  9F., No.176, Sec.2, Gongdao 5th Rd, East Dist, Hsinchu City, 30070. Taiwan
-//
-//
-//
-//                     web: http://www.terasic.com/
-//                     email: support@terasic.com
-//
-// ============================================================================
-//
-// Major Functions:	DE2 TOP LEVEL
-//
-// ============================================================================
-//
-// Revision History :
-// ============================================================================
-//   Ver  :| Author            :| Mod. Date :| Changes Made:
-//   V1.0 :| Johnny Chen       :| 05/08/19  :|      Initial Revision
-//   V1.1 :| Johnny Chen       :| 05/11/16  :|      Added FLASH Address FL_ADDR[21:20]
-//   V1.2 :| Johnny Chen       :| 05/11/16  :|		Fixed ISP1362 INT/DREQ Pin Direction.
-//   V1.3 :| Johnny Chen       :| 06/11/16  :|		Added the Dedicated TV Decoder Line-Locked-Clock Input
-//													            for DE2 v2.X PCB.
-//   V1.5 :| Eko    Yan        :| 12/01/30  :|      Update to version 11.1 sp1.
-// ============================================================================
-
 module DE2_TOP
 	(
 		////////////////////	Clock Input	 	////////////////////
@@ -302,14 +255,13 @@ input          TD_CLK27;            //	TV Decoder 27MHz CLK
 inout	[35:0]	GPIO_0;					//	GPIO Connection 0
 inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 
-	wire clock = (SW[0] == 1) ? KEY[0] : CLOCK_50;
+	wire clock = CLOCK_50;
 	wire [31:0] PC_IF, PC_ID, PC_EXE, PC_MEM;
 	wire [31:0] inst_IF, inst_ID, val2;
-	wire [31:0] reg2_ID, ST_value_EXE, ST_value_MEM;
+	wire [31:0] reg1_ID, reg2_ID, ST_value_EXE, ST_value_MEM;
 	wire [31:0] val1_ID, val1_EXE;
 	wire [31:0] val2_ID, val2_EXE;
 	wire [31:0] ALURes_EXE, ALURes_MEM;
-	wire [4:0] source1, source2;
 	wire [4:0] dest_EXE, dest_MEM, dest_WB; // dest_ID = instruction[25:21] thus nothing declared
 	wire [3:0] EXE_CMD_ID, EXE_CMD_EXE;
 	wire Br_Taken_ID, Br_Taken_EXE, IF_Flush;
@@ -317,27 +269,122 @@ inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 	wire MEM_W_EN_ID, MEM_W_EN_EXE, MEM_W_EN_MEM;
 	wire WB_EN_ID, WB_EN_EXE, WB_EN_MEM, WB_EN_WB;
 
-	sevenSegConv unit1 (.num(PC1), .out1(HEX7), .out2(HEX6));
-	sevenSegConv unit2 (.num(PC2), .out1(HEX5), .out2(HEX4));
-	sevenSegConv unit3 (.num(PC3), .out1(HEX3), .out2(HEX2));
-	sevenSegConv unit4 (.num(PC4), .out1(HEX1), .out2(HEX0));
+	// sevenSegConv unit1 (.num(PC1), .out1(HEX7), .out2(HEX6));
+	// sevenSegConv unit2 (.num(PC2), .out1(HEX5), .out2(HEX4));
+	// sevenSegConv unit3 (.num(PC3), .out1(HEX3), .out2(HEX2));
+	// sevenSegConv unit4 (.num(PC4), .out1(HEX1), .out2(HEX0));
 
-	regFile regFile(.clk(clock), .rst(SW[1]), .src1(source1), .src2(source2), .dest(5'd10), .writeVal(32'd0), .writeEn(0), .reg1(val1_ID), .reg2(reg2_ID));
+	regFile regFile(
+	.clk(clock),
+	.rst(SW[1]),
+	.src1(inst_ID[20:16]),
+	.src2(inst_ID[15:11]),
+	.dest(5'd99),
+	.writeVal(32'd99),
+	.writeEn(1'b1),
+	.reg1(reg1_ID),
+	.reg2(reg2_ID)
+	);
 
-	IFStage IFStage (.clk(clock), .rst(SW[1]), .instruction(inst_IF), .PC(PC_IF) , .brTaken(Br_Taken_EXE), .brOffset(16'd0));
-	IDStage IDStage (.clk(clock), .rst(SW[1]), .instruction(inst_ID), .reg1(val1_ID), .reg2(reg2_ID), .src1(source1), .src2(source2),
-									 .val2(val2), .brTaken(Br_Taken_ID), .EXE_CMD(EXE_CMD_ID), .MEM_R_EN(MEM_R_EN_ID), .MEM_W_EN(MEM_W_EN_ID), .WB_EN(WB_EN_ID));
-	EXEStage EXEStage (.clk(clock), .EXE_CMD(EXE_CMD_EXE), .val1(val1_EXE), .val2(val2_EXE), .ALUResult(ALURes_EXE));
+	//###########################
+	//##### PIPLINE STAGES ######
+	//###########################
+	IFStage IFStage (
+	.clk(clock),
+	.rst(SW[1]),
+	.instruction(inst_IF),
+	.PC(PC_IF) ,
+	.brTaken(Br_Taken_EXE),
+	.brOffset(16'd0)
+	);
 
-	IF2ID IF2IDReg (.clk(clock), .rst(SW[1]), .flush(IF_Flush), .PCIn(PC_IF), .PC(PC_ID), .instructionIn(inst_IF), .instruction(inst_ID));
-	ID2EXE ID2EXEReg (.clk(clock), .rst(SW[1]), .destIn(inst_ID[25:21]), .reg2In(reg2_ID), .val1In(val1_ID), .val2In(val2), .PCIn(PC_ID),
-										.brTakenIn(Br_Taken_ID), .EXE_CMD_IN(EXE_CMD_ID), .MEM_R_EN_IN(MEM_R_EN_ID), .MEM_W_EN_IN(MEM_W_EN_ID), .WB_EN_IN(WB_EN_ID),
-	                  .dest(dest_EXE), .ST_value(ST_value_EXE), .val1(val1_EXE), .val2(val2_EXE), .PC(PC_EXE), .brTaken(Br_Taken_EXE),
-										.EXE_CMD(EXE_CMD_EXE), .MEM_R_EN(MEM_R_EN_EXE), .MEM_W_EN(MEM_W_EN_EXE), .WB_EN(WB_EN_EXE));
-	EXE2MEM EXE2MEMReg (.clk(clock), .rst(SW[1]), .WB_EN_IN(WB_EN_EXE), .MEM_R_EN_IN(MEM_R_EN_EXE), .MEM_W_EN_IN(MEM_W_EN_EXE), .PCIn(PC_EXE),
-											.ALUResIn(ALURes_EXE), .STValIn(ST_value_EXE), .destIn(dest_EXE), .WB_EN(WB_EN_MEM), .MEM_R_EN(MEM_R_EN_MEM),
-											.MEM_W_EN(MEM_W_EN_MEM), .PC(PC_MEM), .ALURes(ALURes_MEM), .STVal(ST_value_MEM), .dest(dest_MEM));
-	// MEM2WB MEM2WBReg (.clk(clock), .rst(SW[1]), .PC());
+	IDStage IDStage (
+	.clk(clock),
+	.rst(SW[1]),
+	.instruction(inst_ID),
+	.reg1(reg1_ID),
+	.reg2(reg2_ID),
+	.src1(inst_ID[20:16]),
+	.src2(inst_ID[15:11]),
+	.val1(val1_ID),
+	.val2(val2_ID),
+	.brTaken(Br_Taken_ID),
+	.EXE_CMD(EXE_CMD_ID),
+	.MEM_R_EN(MEM_R_EN_ID),
+	.MEM_W_EN(MEM_W_EN_ID),
+	.WB_EN(WB_EN_ID)
+	);
+
+	EXEStage EXEStage (
+	.clk(clock),
+	.EXE_CMD(EXE_CMD_EXE),
+	.val1(val1_EXE),
+	.val2(val2_EXE),
+	.ALUResult(ALURes_EXE)
+	);
+
+	//###########################
+	//#### PIPLINE REISTERS #####
+	//###########################
+	IF2ID IF2IDReg (
+	.clk(clock),
+	.rst(SW[1]),
+	.flush(IF_Flush),
+	.PCIn(PC_IF),
+	.PC(PC_ID),
+	.instructionIn(inst_IF),
+	.instruction(inst_ID)
+	);
+
+	ID2EXE ID2EXEReg (
+	.clk(clock),
+	.rst(SW[1]),
+	// INPUTS
+	.destIn(inst_ID[25:21]),
+	.reg2In(reg2_ID),
+	.val1In(val1_ID),
+	.val2In(val2),
+	.PCIn(PC_ID),
+	.brTakenIn(Br_Taken_ID),
+	.EXE_CMD_IN(EXE_CMD_ID),
+	.MEM_R_EN_IN(MEM_R_EN_ID),
+	.MEM_W_EN_IN(MEM_W_EN_ID),
+	.WB_EN_IN(WB_EN_ID),
+	// OUTPUTS
+	.dest(dest_EXE),
+	.ST_value(ST_value_EXE),
+	.val1(val1_EXE),
+	.val2(val2_EXE),
+	.PC(PC_EXE),
+	.brTaken(Br_Taken_EXE),
+	.EXE_CMD(EXE_CMD_EXE),
+	.MEM_R_EN(MEM_R_EN_EXE),
+	.MEM_W_EN(MEM_W_EN_EXE),
+	.WB_EN(WB_EN_EXE)
+	);
+
+	EXE2MEM EXE2MEMReg (
+	.clk(clock),
+	.rst(SW[1]),
+	// INPUTS
+	.WB_EN_IN(WB_EN_EXE),
+	.MEM_R_EN_IN(MEM_R_EN_EXE),
+	.MEM_W_EN_IN(MEM_W_EN_EXE),
+	.PCIn(PC_EXE),
+	.ALUResIn(ALURes_EXE),
+	.STValIn(ST_value_EXE),
+	.destIn(dest_EXE),
+	// OUTPUTS
+	.WB_EN(WB_EN_MEM),
+	.MEM_R_EN(MEM_R_EN_MEM),
+	.MEM_W_EN(MEM_W_EN_MEM),
+	.PC(PC_MEM),
+	.ALURes(ALURes_MEM),
+	.STVal(ST_value_MEM),
+	.dest(dest_MEM)
+	);
+
+	// MEM2WB MEM2WBReg (.clk(clock), .rst(rst), .PC());
 
 	assign IF_Flush = (Br_Taken_ID || Br_Taken_EXE);
-endmodule
+endmoduleendmodule
