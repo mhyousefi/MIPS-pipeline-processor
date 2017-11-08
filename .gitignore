@@ -1,0 +1,6 @@
+*.csv
+*.mpf
+*.qpf
+*.qsf
+*.v.bak
+.DS_Store
