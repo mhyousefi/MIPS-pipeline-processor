@@ -4,3 +4,10 @@
 *.qsf
 *.v.bak
 .DS_Store
+
+configs/
+db/
+incremental_db/
+output_files/
+simulation/
+work/
