@@ -3,6 +3,8 @@
 *.qpf
 *.qsf
 *.v.bak
+*.wlf
+*.cr.mti
 .DS_Store
 
 configs/
