@@ -2,11 +2,11 @@
 
 module testbesnch ();
   reg clk,rst;
-  DE2_TOP top_module (clk,rst);
+  TopLevel_ModelSim top_module (clk, rst);
 
   initial begin
-    clk=0;
-    repeat(500) #50 clk=~clk ;
+    clk=1;
+    repeat(5000) #50 clk=~clk ;
   end
 
   initial begin

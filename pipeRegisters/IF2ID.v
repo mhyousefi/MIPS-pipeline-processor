@@ -9,9 +9,14 @@ module IF2ID (clk, rst, flush, PCIn, instructionIn, PC, instruction);
       instruction <= 32'd0;
     end
     else begin
-      PC <= PCIn;
-      if (flush) instruction <= 32'd0;
-      else instruction <= instructionIn;
+      if (flush) begin
+        instruction <= 32'd0;
+        PC <= 32'd0;
+      end
+      else begin
+        instruction <= instructionIn;
+        PC <= PCIn;
+      end
     end
   end
 endmodule // IF2ID
