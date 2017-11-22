@@ -17,7 +17,7 @@ module ALU #(parameter integer SIZE = 32, parameter integer COM_SIZE = 4) (val1,
       `EXE_SLL: aluOut <= val1 <<< val2;
       `EXE_SRA: aluOut <= val1 >> val2;
       `EXE_SRL: aluOut <= val1 >>> val2;
-      default: aluOut <= val1 + val2;
+      default: aluOut <= 32'd0;
     endcase
   end
 endmodule // ALU

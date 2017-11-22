@@ -12,7 +12,7 @@
 `define OP_SRL 6'b001100
 `define OP_ADDI 6'b100000
 `define OP_SUBI 6'b100001
-`define OP_LD 6'd100100
+`define OP_LD 6'b100100
 `define OP_ST 6'b100101
 `define OP_BEZ 6'b101000
 `define OP_BNE 6'b101001
