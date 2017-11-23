@@ -1,4 +1,4 @@
-module hazard_detection(src1_ID, src2_ID, dest_EXE, WB_EN_EXE, dest_MEM, WB_EN_MEM, hazard_detected)
+module hazard_detection(is_imm, src1_ID, src2_ID, dest_EXE, WB_EN_EXE, dest_MEM, WB_EN_MEM, hazard_detected);
   input [4:0] src1_ID, src2_ID;
   input [4:0] dest_EXE, dest_MEM;
   input WB_EN_EXE, WB_EN_MEM, is_imm;

@@ -1,7 +1,7 @@
-module IFStage (clk, rst, brTaken, brOffset, PC, instruction);
+module IFStage (clk, rst, brTaken, brOffset, freeze, PC, instruction);
   parameter integer WORD_SIZE = 32;
 
-  input clk, rst, brTaken;
+  input clk, rst, brTaken, freeze;
   input [WORD_SIZE-1:0] brOffset;
   output [WORD_SIZE-1:0] PC, instruction;
 
@@ -23,6 +23,7 @@ module IFStage (clk, rst, brTaken, brOffset, PC, instruction);
   register PCReg (
     .clk(clk),
     .rst(rst),
+    .writeEn(~freeze),
     .regIn(adderOut),
     .regOut(PC)
   );

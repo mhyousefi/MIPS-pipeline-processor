@@ -271,6 +271,7 @@ inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 	wire MEM_R_EN_ID, MEM_R_EN_EXE, MEM_R_EN_MEM, MEM_R_EN_WB;
 	wire MEM_W_EN_ID, MEM_W_EN_EXE, MEM_W_EN_MEM;
 	wire WB_EN_ID, WB_EN_EXE, WB_EN_MEM, WB_EN_WB;
+	wire hazard_detected;
 
 	// sevenSegConv unit1 (.num(PC1), .out1(HEX7), .out2(HEX6));
 	// sevenSegConv unit2 (.num(PC2), .out1(HEX5), .out2(HEX4));
@@ -289,6 +290,16 @@ inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 		// OUTPUTS
 		.reg1(reg1_ID),
 		.reg2(reg2_ID)
+	);
+
+	hazard_detection hazard (
+		.src1_ID(regFile_src1_in),
+		.src2_ID(regFile_src2_in),
+		.dest_EXE(dest_EXE),
+		.dest_MEM(dest_MEM),
+		.WB_EN_EXE(WB_EN_EXE),
+		.WB_EN_MEM(WB_EN_MEM),
+		.hazard_detected(hazard_detected)
 	);
 
 	//###########################

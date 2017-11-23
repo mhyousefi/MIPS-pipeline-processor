@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module testbesnch ();
+module testbench ();
   reg clk,rst;
   TopLevel_ModelSim top_module (clk, rst);
 

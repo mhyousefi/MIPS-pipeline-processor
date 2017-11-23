@@ -15,6 +15,7 @@ module TopLevel_ModelSim (input CLOCK_50, input rst);
 	wire MEM_R_EN_ID, MEM_R_EN_EXE, MEM_R_EN_MEM, MEM_R_EN_WB;
 	wire MEM_W_EN_ID, MEM_W_EN_EXE, MEM_W_EN_MEM;
 	wire WB_EN_ID, WB_EN_EXE, WB_EN_MEM, WB_EN_WB;
+	wire hazard_detected;
 
 	regFile regFile(
 		// INPUTS
@@ -30,6 +31,16 @@ module TopLevel_ModelSim (input CLOCK_50, input rst);
 		.reg2(reg2_ID)
 	);
 
+	hazard_detection hazard (
+		.src1_ID(regFile_src1_in),
+		.src2_ID(regFile_src2_in),
+		.dest_EXE(dest_EXE),
+		.dest_MEM(dest_MEM),
+		.WB_EN_EXE(WB_EN_EXE),
+		.WB_EN_MEM(WB_EN_MEM),
+		.hazard_detected(hazard_detected)
+	);
+
 	//###########################
 	//##### PIPLINE STAGES ######
 	//###########################
@@ -37,6 +48,7 @@ module TopLevel_ModelSim (input CLOCK_50, input rst);
 		// INPUTS
 		.clk(clock),
 		.rst(rst),
+		.freeze(hazard_detected),
 		.brTaken(Br_Taken_ID),
 		.brOffset(val2_ID),
 		// OUTPUTS
@@ -98,12 +110,15 @@ module TopLevel_ModelSim (input CLOCK_50, input rst);
 	//#### PIPLINE REISTERS #####
 	//###########################
 	IF2ID IF2IDReg (
+		// INPUTS
 		.clk(clock),
 		.rst(rst),
 		.flush(IF_Flush),
+		.freeze(hazard_detected),
 		.PCIn(PC_IF),
-		.PC(PC_ID),
 		.instructionIn(inst_IF),
+		// OUTPUTS
+		.PC(PC_ID),
 		.instruction(inst_ID)
 	);
 
