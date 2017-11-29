@@ -1,14 +1,14 @@
-module hazard_detection(is_imm, src1_ID, src2_ID, dest_EXE, WB_EN_EXE, dest_MEM, WB_EN_MEM, hazard_detected);
+module hazard_detection(is_imm, ST_or_BNE, src1_ID, src2_ID, dest_EXE, WB_EN_EXE, dest_MEM, WB_EN_MEM, hazard_detected);
   input [4:0] src1_ID, src2_ID;
   input [4:0] dest_EXE, dest_MEM;
-  input WB_EN_EXE, WB_EN_MEM, is_imm;
-  output reg hazard_detected;
+  input WB_EN_EXE, WB_EN_MEM, is_imm, ST_or_BNE;
+  output hazard_detected;
+  wire src2_is_valid, exe_has_hazard, mem_has_hazard;
 
-  always @(*) begin
-    hazard_detected <= 1'b0;
-    if (WB_EN_EXE)
-      hazard_detected <= (src1_ID == dest_EXE || (~is_imm && src2_ID == dest_EXE)) ? 1 : 0;
-    else if (WB_EN_MEM)
-      hazard_detected <= (src1_ID == dest_MEM || (~is_imm && src2_ID == dest_MEM)) ? 1 : 0;
-  end
+  assign src2_is_valid =  (~is_imm) || ST_or_BNE;
+
+  assign exe_has_hazard = WB_EN_EXE && (src1_ID == dest_EXE || (src2_is_valid && src2_ID == dest_EXE));
+  assign mem_has_hazard = WB_EN_MEM && (src1_ID == dest_MEM || (src2_is_valid && src2_ID == dest_MEM));
+
+  assign hazard_detected = exe_has_hazard || mem_has_hazard;
 endmodule // hazard_detection

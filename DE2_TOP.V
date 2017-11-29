@@ -254,7 +254,6 @@ input          TD_CLK27;            //	TV Decoder 27MHz CLK
 ////////////////////////	GPIO	////////////////////////////////
 inout	[35:0]	GPIO_0;					//	GPIO Connection 0
 inout	[35:0]	GPIO_1;					//	GPIO Connection 1
-
 	wire clock = CLOCK_50;
 	wire [31:0] PC_IF, PC_ID, PC_EXE, PC_MEM;
 	wire [31:0] inst_IF, inst_ID;
@@ -271,12 +270,7 @@ inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 	wire MEM_R_EN_ID, MEM_R_EN_EXE, MEM_R_EN_MEM, MEM_R_EN_WB;
 	wire MEM_W_EN_ID, MEM_W_EN_EXE, MEM_W_EN_MEM;
 	wire WB_EN_ID, WB_EN_EXE, WB_EN_MEM, WB_EN_WB;
-	wire hazard_detected;
-
-	// sevenSegConv unit1 (.num(PC1), .out1(HEX7), .out2(HEX6));
-	// sevenSegConv unit2 (.num(PC2), .out1(HEX5), .out2(HEX4));
-	// sevenSegConv unit3 (.num(PC3), .out1(HEX3), .out2(HEX2));
-	// sevenSegConv unit4 (.num(PC4), .out1(HEX1), .out2(HEX0));
+	wire hazard_detected, is_imm, ST_or_BNE;
 
 	regFile regFile(
 		// INPUTS
@@ -293,6 +287,8 @@ inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 	);
 
 	hazard_detection hazard (
+		.is_imm(is_imm),
+		.ST_or_BNE(ST_or_BNE),
 		.src1_ID(regFile_src1_in),
 		.src2_ID(regFile_src2_in),
 		.dest_EXE(dest_EXE),
@@ -309,6 +305,7 @@ inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 		// INPUTS
 		.clk(clock),
 		.rst(SW[0]),
+		.freeze(hazard_detected),
 		.brTaken(Br_Taken_ID),
 		.brOffset(val2_ID),
 		// OUTPUTS
@@ -320,6 +317,7 @@ inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 		// INPUTS
 		.clk(clock),
 		.rst(SW[0]),
+		.hazard_detected_in(hazard_detected),
 		.instruction(inst_ID),
 		.reg1(reg1_ID),
 		.reg2(reg2_ID),
@@ -332,7 +330,9 @@ inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 		.EXE_CMD(EXE_CMD_ID),
 		.MEM_R_EN(MEM_R_EN_ID),
 		.MEM_W_EN(MEM_W_EN_ID),
-		.WB_EN(WB_EN_ID)
+		.WB_EN(WB_EN_ID),
+		.is_imm_out(is_imm),
+		.ST_or_BNE_out(ST_or_BNE)
 	);
 
 	EXEStage EXEStage (
@@ -370,19 +370,22 @@ inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 	//#### PIPLINE REISTERS #####
 	//###########################
 	IF2ID IF2IDReg (
+		// INPUTS
 		.clk(clock),
 		.rst(SW[0]),
 		.flush(IF_Flush),
+		.freeze(hazard_detected),
 		.PCIn(PC_IF),
-		.PC(PC_ID),
 		.instructionIn(inst_IF),
+		// OUTPUTS
+		.PC(PC_ID),
 		.instruction(inst_ID)
 	);
 
 	ID2EXE ID2EXEReg (
-		// INPUTS
 		.clk(clock),
 		.rst(SW[0]),
+		// INPUTS
 		.destIn(inst_ID[25:21]),
 		.reg2In(reg2_ID),
 		.val1In(val1_ID),
@@ -407,9 +410,9 @@ inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 	);
 
 	EXE2MEM EXE2MEMReg (
-		// INPUTS
 		.clk(clock),
 		.rst(SW[0]),
+		// INPUTS
 		.WB_EN_IN(WB_EN_EXE),
 		.MEM_R_EN_IN(MEM_R_EN_EXE),
 		.MEM_W_EN_IN(MEM_W_EN_EXE),
@@ -428,9 +431,9 @@ inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 	);
 
 	MEM2WB MEM2WB(
-		// INPUTS
 		.clk(clock),
 		.rst(SW[0]),
+		// INPUTS
 		.WB_EN_IN(WB_EN_MEM),
 		.MEM_R_EN_IN(MEM_R_EN_MEM),
 		.ALUResIn(ALURes_MEM),

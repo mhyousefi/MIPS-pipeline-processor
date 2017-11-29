@@ -1,7 +1,7 @@
-module IDStage (clk, rst, instruction, reg1, reg2, src1, src2, val1, val2, brTaken, EXE_CMD, MEM_R_EN, MEM_W_EN, WB_EN);
-  input clk, rst;
+module IDStage (clk, rst, hazard_detected_in, is_imm_out, ST_or_BNE_out, instruction, reg1, reg2, src1, src2, val1, val2, brTaken, EXE_CMD, MEM_R_EN, MEM_W_EN, WB_EN);
+  input clk, rst, hazard_detected_in;
   input [31:0] instruction, reg1, reg2;
-  output brTaken, MEM_R_EN, MEM_W_EN, WB_EN;
+  output brTaken, MEM_R_EN, MEM_W_EN, WB_EN, is_imm_out, ST_or_BNE_out;
   output [3:0] EXE_CMD;
   output [4:0] src1, src2;
   output [31:0] val1, val2;
@@ -20,7 +20,8 @@ module IDStage (clk, rst, instruction, reg1, reg2, src1, src2, val1, val2, brTak
     .ST_or_BNE(ST_or_BNE),
     .WB_EN(WB_EN),
     .MEM_R_EN(MEM_R_EN),
-    .MEM_W_EN(MEM_W_EN)
+    .MEM_W_EN(MEM_W_EN),
+    .hazard_detected(hazard_detected_in)
   );
 
   mux #(.SIZE(5))  mux_src2 (
@@ -52,4 +53,6 @@ module IDStage (clk, rst, instruction, reg1, reg2, src1, src2, val1, val2, brTak
   assign brTaken = CU2and && Cond2and;
   assign val1 = reg1;
   assign src1 = instruction[20:16];
+  assign is_imm_out = Is_Imm;
+  assign ST_or_BNE_out = ST_or_BNE;
 endmodule // IDStage

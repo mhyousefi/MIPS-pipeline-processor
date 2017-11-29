@@ -15,7 +15,7 @@ module TopLevel_ModelSim (input CLOCK_50, input rst);
 	wire MEM_R_EN_ID, MEM_R_EN_EXE, MEM_R_EN_MEM, MEM_R_EN_WB;
 	wire MEM_W_EN_ID, MEM_W_EN_EXE, MEM_W_EN_MEM;
 	wire WB_EN_ID, WB_EN_EXE, WB_EN_MEM, WB_EN_WB;
-	wire hazard_detected;
+	wire hazard_detected, is_imm, ST_or_BNE;
 
 	regFile regFile(
 		// INPUTS
@@ -32,6 +32,8 @@ module TopLevel_ModelSim (input CLOCK_50, input rst);
 	);
 
 	hazard_detection hazard (
+		.is_imm(is_imm),
+		.ST_or_BNE(ST_or_BNE),
 		.src1_ID(regFile_src1_in),
 		.src2_ID(regFile_src2_in),
 		.dest_EXE(dest_EXE),
@@ -60,6 +62,7 @@ module TopLevel_ModelSim (input CLOCK_50, input rst);
 		// INPUTS
 		.clk(clock),
 		.rst(rst),
+		.hazard_detected_in(hazard_detected),
 		.instruction(inst_ID),
 		.reg1(reg1_ID),
 		.reg2(reg2_ID),
@@ -72,7 +75,9 @@ module TopLevel_ModelSim (input CLOCK_50, input rst);
 		.EXE_CMD(EXE_CMD_ID),
 		.MEM_R_EN(MEM_R_EN_ID),
 		.MEM_W_EN(MEM_W_EN_ID),
-		.WB_EN(WB_EN_ID)
+		.WB_EN(WB_EN_ID),
+		.is_imm_out(is_imm),
+		.ST_or_BNE_out(ST_or_BNE)
 	);
 
 	EXEStage EXEStage (
