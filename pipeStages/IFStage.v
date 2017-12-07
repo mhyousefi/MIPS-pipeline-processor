@@ -7,7 +7,7 @@ module IFStage (clk, rst, brTaken, brOffset, freeze, PC, instruction);
 
   wire [31:0] adderIn1, adderOut, brOffserTimes4;
 
-  mux adderInput (
+  mux #(.WORD_LENGTH(32)) adderInput (
     .in1(32'd4),
     .in2(brOffserTimes4),
     .sel(brTaken),

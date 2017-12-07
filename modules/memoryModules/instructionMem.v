@@ -304,6 +304,11 @@ module instructionMem (rst, addr, instruction);
         instMem[229] <= 8'b00000000;
         instMem[230] <= 8'b11111111;
         instMem[231] <= 8'b11111111;
+
+        instMem[232] <= 8'b00000000; //-- NOPE
+        instMem[233] <= 8'b00000000;
+        instMem[234] <= 8'b00000000;
+        instMem[235] <= 8'b00000000;
       end
     end
   assign instruction = {instMem[address], instMem[address + 1], instMem[address + 2], instMem[address + 3]};

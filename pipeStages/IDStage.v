@@ -1,9 +1,10 @@
-module IDStage (clk, rst, hazard_detected_in, is_imm_out, ST_or_BNE_out, instruction, reg1, reg2, src1, src2, val1, val2, brTaken, EXE_CMD, MEM_R_EN, MEM_W_EN, WB_EN);
+module IDStage (clk, rst, hazard_detected_in, is_imm_out, ST_or_BNE_out, instruction, reg1, reg2, src1, src2_reg_file, src2_forw, val1, val2, brTaken, EXE_CMD, MEM_R_EN, MEM_W_EN, WB_EN, branch_comm);
   input clk, rst, hazard_detected_in;
   input [31:0] instruction, reg1, reg2;
   output brTaken, MEM_R_EN, MEM_W_EN, WB_EN, is_imm_out, ST_or_BNE_out;
+  output [1:0] branch_comm;
   output [3:0] EXE_CMD;
-  output [4:0] src1, src2;
+  output [4:0] src1, src2_reg_file, src2_forw;
   output [31:0] val1, val2;
 
   wire CU2and, Cond2and;
@@ -12,8 +13,10 @@ module IDStage (clk, rst, hazard_detected_in, is_imm_out, ST_or_BNE_out, instruc
   wire [31:0] signExt2Mux;
 
   controller controller(
+    // INPUT
     .operation(instruction[31:26]),
     .branchEn(CU2and),
+    // OUTPUT
     .EXE_CMD(EXE_CMD),
     .Branch_command(CU2Cond),
     .Is_Imm(Is_Imm),
@@ -24,18 +27,25 @@ module IDStage (clk, rst, hazard_detected_in, is_imm_out, ST_or_BNE_out, instruc
     .hazard_detected(hazard_detected_in)
   );
 
-  mux #(.SIZE(5))  mux_src2 (
+  mux #(.WORD_LENGTH(5)) mux_src2 ( // determins the register source 2 for register file
     .in1(instruction[15:11]),
     .in2(instruction[25:21]),
     .sel(ST_or_BNE),
-    .out(src2)
+    .out(src2_reg_file)
   );
 
-  mux #(.SIZE(32)) mux_val2 (
+  mux #(.WORD_LENGTH(32)) mux_val2 (
     .in1(reg2),
     .in2(signExt2Mux),
     .sel(Is_Imm),
     .out(val2)
+  );
+
+  mux #(.WORD_LENGTH(5)) mux_src2_forw ( // determins the register source 2 for forwarding
+    .in1(instruction[15:11]), // or in other words, src2
+    .in2(5'd0),
+    .sel(Is_Imm),
+    .out(src2_forw)
   );
 
   signExtend signExtend(
@@ -55,4 +65,5 @@ module IDStage (clk, rst, hazard_detected_in, is_imm_out, ST_or_BNE_out, instruc
   assign src1 = instruction[20:16];
   assign is_imm_out = Is_Imm;
   assign ST_or_BNE_out = ST_or_BNE;
+  assign branch_comm = CU2Cond;
 endmodule // IDStage
