@@ -16,7 +16,7 @@ module regFile (clk, rst, src1, src2, dest, writeVal, writeEn, reg1, reg2);
 	    end
 
     else if (writeEn) regMem[dest] <= writeVal;
-    regMem[0] <= 31'd0;
+    regMem[0] <= 0;
   end
 
   assign reg1 = (regMem[src1]);
