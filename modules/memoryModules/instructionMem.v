@@ -1,4 +1,4 @@
-`include "../../defines.v"
+`include "defines.v"
 
 module instructionMem (rst, addr, instruction);
   input rst;

@@ -1,4 +1,4 @@
-`include "../defines.v"
+`include "defines.v"
 
 module ALU (val1, val2, EXE_CMD, aluOut);
   input [`WORD_LEN-1:0] val1, val2;

@@ -1,4 +1,4 @@
-`include "../defines.v"
+`include "defines.v"
 
 module signExtend (in, out);
   input [15:0] in;

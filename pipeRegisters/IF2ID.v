@@ -1,4 +1,4 @@
-`include "../defines.v"
+`include "defines.v"
 
 module IF2ID (clk, rst, flush, freeze, PCIn, instructionIn, PC, instruction);
   input clk, rst, flush, freeze;

@@ -1,4 +1,4 @@
-`include "../defines.v"
+`include "defines.v"
 
 module MEM2WB (clk, rst, WB_EN_IN, MEM_R_EN_IN, ALUResIn, memReadValIn, destIn,
                          WB_EN,    MEM_R_EN,    ALURes,   memReadVal,   dest);

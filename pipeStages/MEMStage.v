@@ -1,4 +1,4 @@
-`include "../defines.v"
+`include "defines.v"
 
 module MEMStage (clk, rst, MEM_R_EN, MEM_W_EN, ALU_res, ST_value, dataMem_out);
   input clk, rst, MEM_R_EN, MEM_W_EN;

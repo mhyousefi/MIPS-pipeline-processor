@@ -1,4 +1,4 @@
-`include "../defines.v"
+`include "defines.v"
 
 module regFile (clk, rst, src1, src2, dest, writeVal, writeEn, reg1, reg2);
   input clk, rst, writeEn;

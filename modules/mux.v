@@ -1,4 +1,4 @@
-`include "../defines.v"
+`include "defines.v"
 
 module mux #(parameter integer LENGTH) (in1, in2, sel, out);
   input sel;

@@ -1,4 +1,4 @@
-`include "../../defines.v"
+`include "defines.v"
 
 module dataMem (clk, rst, writeEn, readEn, address, dataIn, dataOut);
   input clk, rst, readEn, writeEn;

@@ -1,4 +1,4 @@
-`include "../defines.v"
+`include "defines.v"
 
 module controller (opCode, branchEn, EXE_CMD, Branch_command, Is_Imm, ST_or_BNE, WB_EN, MEM_R_EN, MEM_W_EN, hazard_detected);
   input hazard_detected;

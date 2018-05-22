@@ -1,4 +1,4 @@
-`include "../defines.v"
+`include "defines.v"
 
 module IFStage (clk, rst, brTaken, brOffset, freeze, PC, instruction);
   input clk, rst, brTaken, freeze;

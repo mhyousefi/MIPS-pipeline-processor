@@ -1,4 +1,4 @@
-`include "../defines.v"
+`include "defines.v"
 
 module WBStage (MEM_R_EN, memData, aluRes, WB_res);
   input MEM_R_EN;

@@ -1,4 +1,4 @@
-`include "../defines.v"
+`include "defines.v"
 
 module conditionChecker (reg1, reg2, cuBranchComm, brCond);
   input [`WORD_LEN-1: 0] reg1, reg2;
