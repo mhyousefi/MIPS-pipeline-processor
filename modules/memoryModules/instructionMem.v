@@ -1,19 +1,16 @@
+`include "../../defines.v"
+
 module instructionMem (rst, addr, instruction);
-  parameter integer WORD_SIZE = 32;
-  parameter integer MEM_SIZE = 1024;
-  parameter integer MEM_CELL_SIZE = 8;
-
   input rst;
-  input [WORD_SIZE-1:0] addr;
-  output [MEM_CELL_SIZE*4-1:0] instruction;
+  input [`WORD_LEN-1:0] addr;
+  output [`WORD_LEN-1:0] instruction;
 
-  wire [$clog2(MEM_SIZE)-1:0] address = addr[$clog2(MEM_SIZE)-1:0];
-  reg [MEM_CELL_SIZE-1:0] instMem [0:MEM_SIZE-1];
+  wire [$clog2(`MEM_SIZE)-1:0] address = addr[$clog2(`MEM_SIZE)-1:0];
+  reg [`MEM_CELL_SIZE-1:0] instMem [0:`MEM_SIZE-1];
 
   always @ (*) begin
   	if (rst) begin
-        // No nop added in between instructions
-        // because hazard detection will take do so
+        // No nop added in between instructions since there is a hazard detection unit
 
         instMem[0] <= 8'b10000000; //-- Addi	r1,r0,10
         instMem[1] <= 8'b00100000;
@@ -311,5 +308,6 @@ module instructionMem (rst, addr, instruction);
         instMem[235] <= 8'b00000000;
       end
     end
+
   assign instruction = {instMem[address], instMem[address + 1], instMem[address + 2], instMem[address + 3]};
 endmodule // insttructionMem

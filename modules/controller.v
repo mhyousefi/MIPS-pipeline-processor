@@ -1,17 +1,17 @@
 `include "../defines.v"
 
-module controller (operation, branchEn, EXE_CMD, Branch_command, Is_Imm, ST_or_BNE, WB_EN, MEM_R_EN, MEM_W_EN, hazard_detected);
+module controller (opCode, branchEn, EXE_CMD, Branch_command, Is_Imm, ST_or_BNE, WB_EN, MEM_R_EN, MEM_W_EN, hazard_detected);
   input hazard_detected;
-  input [5:0] operation;
+  input [`OP_CODE_LEN-1:0] opCode;
   output reg branchEn;
-  output reg [3:0] EXE_CMD;
+  output reg [`EXE_CMD_LEN-1:0] EXE_CMD;
   output reg [1:0] Branch_command;
   output reg Is_Imm, ST_or_BNE, WB_EN, MEM_R_EN, MEM_W_EN;
 
   always @ ( * ) begin
     if (hazard_detected == 0) begin
-      {branchEn, EXE_CMD, Branch_command, Is_Imm, ST_or_BNE, WB_EN, MEM_R_EN, MEM_W_EN} <= 12'd0;
-      case (operation)
+      {branchEn, EXE_CMD, Branch_command, Is_Imm, ST_or_BNE, WB_EN, MEM_R_EN, MEM_W_EN} <= 0;
+      case (opCode)
         // R-type operations
         `OP_ADD: begin EXE_CMD <= `EXE_ADD; WB_EN <= 1; end
         `OP_SUB: begin EXE_CMD <= `EXE_SUB; WB_EN <= 1; end

@@ -1,7 +1,7 @@
 `include "../defines.v"
 
 module conditionChecker (reg1, reg2, cuBranchComm, brCond);
-  input [31: 0] reg1, reg2;
+  input [`WORD_LEN-1: 0] reg1, reg2;
   input [1:0] cuBranchComm;
   output reg brCond;
 

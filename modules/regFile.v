@@ -1,15 +1,17 @@
-module regFile #(parameter integer SIZE = 32) (clk, rst, src1, src2, dest, writeVal, writeEn, reg1, reg2);
-  input clk, rst, writeEn;
-  input [4:0] src1, src2, dest;
-  input [31:0] writeVal;
-  output [31:0] reg1, reg2;
+`include "../defines.v"
 
-  reg [31:0] regMem [0:SIZE-1];
+module regFile (clk, rst, src1, src2, dest, writeVal, writeEn, reg1, reg2);
+  input clk, rst, writeEn;
+  input [`REG_FILE_ADDR_LEN-1:0] src1, src2, dest;
+  input [`WORD_LEN-1:0] writeVal;
+  output [`WORD_LEN-1:0] reg1, reg2;
+
+  reg [`WORD_LEN-1:0] regMem [0:`REG_FILE_SIZE-1];
   integer i;
 
   always @ (negedge clk) begin
     if (rst) begin
-      for (i = 0; i < SIZE; i = i + 1)
+      for (i = 0; i < `WORD_LEN; i = i + 1)
         regMem[i] <= 32'd0;
 	    end
 

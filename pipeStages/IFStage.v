@@ -1,13 +1,13 @@
+`include "../defines.v"
+
 module IFStage (clk, rst, brTaken, brOffset, freeze, PC, instruction);
-  parameter integer WORD_SIZE = 32;
-
   input clk, rst, brTaken, freeze;
-  input [WORD_SIZE-1:0] brOffset;
-  output [WORD_SIZE-1:0] PC, instruction;
+  input [`WORD_LEN-1:0] brOffset;
+  output [`WORD_LEN-1:0] PC, instruction;
 
-  wire [31:0] adderIn1, adderOut, brOffserTimes4;
+  wire [`WORD_LEN-1:0] adderIn1, adderOut, brOffserTimes4;
 
-  mux #(.WORD_LENGTH(32)) adderInput (
+  mux #(.LENGTH(`WORD_LEN)) adderInput (
     .in1(32'd4),
     .in2(brOffserTimes4),
     .sel(brTaken),
