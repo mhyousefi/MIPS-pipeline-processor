@@ -47,4 +47,4 @@
 `define COND_JUMP 2'b10
 `define COND_BEZ 2'b11
 `define COND_BNE 2'b01
-`define COND_NOTHING 2'00
+`define COND_NOTHING 2'b00

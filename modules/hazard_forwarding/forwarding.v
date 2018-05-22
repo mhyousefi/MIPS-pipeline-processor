@@ -9,7 +9,7 @@ module forwarding_EXE (src1_EXE, src2_EXE, ST_src_EXE, dest_MEM, dest_WB, WB_EN_
   always @ ( * ) begin
     // initializing sel signals to 0
     // they will change to enable forwrding if needed.
-    {val1_sel, val2_sel, ST_val_sel} <= 6'd0;
+    {val1_sel, val2_sel, ST_val_sel} <= 0;
 
     // determining forwarding control signal for store value (ST_val)
     if (WB_EN_MEM && ST_src_EXE == dest_MEM) ST_val_sel <= 2'd1;

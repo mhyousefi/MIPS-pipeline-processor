@@ -33,14 +33,12 @@ module controller (opCode, branchEn, EXE_CMD, Branch_command, Is_Imm, ST_or_BNE,
         `OP_BEZ: begin EXE_CMD <= `EXE_NO_OPERATION; Is_Imm <= 1; Branch_command <= `COND_BEZ; branchEn <= 1; end
         `OP_BNE: begin EXE_CMD <= `EXE_NO_OPERATION; Is_Imm <= 1; Branch_command <= `COND_BNE; branchEn <= 1; ST_or_BNE <= 1; end
         `OP_JMP: begin EXE_CMD <= `EXE_NO_OPERATION; Is_Imm <= 1; Branch_command <= `COND_JUMP; branchEn <= 1; end
-        default: {branchEn, EXE_CMD, Branch_command, Is_Imm, ST_or_BNE, WB_EN, MEM_R_EN, MEM_W_EN} <= 11'd0;
+        default: {branchEn, EXE_CMD, Branch_command, Is_Imm, ST_or_BNE, WB_EN, MEM_R_EN, MEM_W_EN} <= 0;
       endcase
     end
 
     else if (hazard_detected ==  1) begin
-      EXE_CMD <= 4'd0;
-      WB_EN <= 0;
-      MEM_W_EN <= 0;
+      {EXE_CMD, WB_EN, MEM_W_EN} <= 0;
     end
   end
 endmodule // controller

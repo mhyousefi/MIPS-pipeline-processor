@@ -18,5 +18,5 @@ module dataMem (clk, rst, writeEn, readEn, address, dataIn, dataOut);
   end
 
   assign base_address = ((address & 32'b11111111111111111111101111111111) >> 2) << 2;
-  assign dataOut = (address < 1024) ? 32'd0 : {dataMem[base_address], dataMem[base_address + 1], dataMem[base_address + 2], dataMem[base_address + 3]};
+  assign dataOut = (address < 1024) ? 0 : {dataMem[base_address], dataMem[base_address + 1], dataMem[base_address + 2], dataMem[base_address + 3]};
 endmodule // dataMem

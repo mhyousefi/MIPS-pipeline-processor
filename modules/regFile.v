@@ -12,7 +12,7 @@ module regFile (clk, rst, src1, src2, dest, writeVal, writeEn, reg1, reg2);
   always @ (negedge clk) begin
     if (rst) begin
       for (i = 0; i < `WORD_LEN; i = i + 1)
-        regMem[i] <= 32'd0;
+        regMem[i] <= 0;
 	    end
 
     else if (writeEn) regMem[dest] <= writeVal;
