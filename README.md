@@ -1,8 +1,11 @@
 # MIPS-pipeline-processor
+
+Thanks for visiting this repository!
+
 Developed during the Fall 2017 Computer Architecture Laboratory course at the University of Tehran, 
 this project is an implementation of a pipelined MIPS processor featuring hazard detection as well as forwarding.
 This implementation is based on a limited ISA, the details for which are present in `docs/MIPS_ISA.png`.
-This code is synthesizable and can be run on an FPGA. We used Altera DE2 units for testing purposes.
+This code is synthesizable and can be run on an FPGA. We used Altera DE2 units for testing purposes. The implemtation has been verified using a relatively complex test program (found in `instructions/example_source_code.txt`).
 
 ![MIPS pipelened processor](https://github.com/mhyousefi/MIPS-pipeline-processor/blob/master/docs/MIPS_diagram.png?raw=true)
 
@@ -37,8 +40,6 @@ An instance of the top-level circuit is taken in `testbench.v`.
 The inputs of the `MIPS_Processor` include `clk`, `rst`, and `forwarding_EN`.
 Forwarding will be enabled if `forwarding_EN` is set to 1, and disabled otherwise.
 
-
-
 ## Under the hood
 
 There are five pipeline stages: 
@@ -62,7 +63,11 @@ in `topLevelCircuit.v`. Pipe stages are made of and encapsulate other supporting
 `defines.v` contains project-wide constants for **opcodes**, **execution commands**, and **branch condition commands**. 
 It also contains constants for wire widths and memory specifications. You can change memory size values to suit your needs.
 
-## Wire naming convention
+### Wire naming convention
 
 To maintain conformity, most wire names follow the format {wire description}_{wire stage}, where the second part describes 
 the stage where the wire is located. For example, `MEM_W_EN_ID` is the memory write enable signal present in the instruction decode stage.
+
+## Contributions
+
+Contributions are welcomed, both general improvements as well as new features such as a more realistic memory heirarchy or branch prediction. However, please follow the coding styles and the naming convention. Another useful contribution would be more comprehensive testing and verification and bug report.
