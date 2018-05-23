@@ -1,6 +1,6 @@
 `include "defines.v"
 
-module TopLevel_ModelSim (input CLOCK_50, input rst, input forward_EN);
+module MIPS_Processor  (input CLOCK_50, input rst, input forward_EN);
 	wire clock = CLOCK_50;
 	wire [`WORD_LEN-1:0] PC_IF, PC_ID, PC_EXE, PC_MEM;
 	wire [`WORD_LEN-1:0] inst_IF, inst_ID;

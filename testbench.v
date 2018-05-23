@@ -2,7 +2,7 @@
 
 module testbench ();
   reg clk,rst, forwarding_EN;
-  TopLevel_ModelSim top_module (clk, rst, forwarding_EN);
+  MIPS_Processor top_module (clk, rst, forwarding_EN);
 
   initial begin
     clk=1;
