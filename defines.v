@@ -6,7 +6,8 @@
 `define OP_CODE_LEN 6
 
 // Memory constants
-`define MEM_SIZE 1024
+`define DATA_MEM_SIZE 1024
+`define INSTR_MEM_SIZE 1024
 `define REG_FILE_SIZE 32
 `define MEM_CELL_SIZE 8
 
