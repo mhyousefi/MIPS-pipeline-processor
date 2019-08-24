@@ -12,7 +12,7 @@ module controller (opCode, branchEn, EXE_CMD, Branch_command, Is_Imm, ST_or_BNE,
     if (hazard_detected == 0) begin
       {branchEn, EXE_CMD, Branch_command, Is_Imm, ST_or_BNE, WB_EN, MEM_R_EN, MEM_W_EN} <= 0;
       case (opCode)
-        // R-type operations
+        // operations writing to the register file
         `OP_ADD: begin EXE_CMD <= `EXE_ADD; WB_EN <= 1; end
         `OP_SUB: begin EXE_CMD <= `EXE_SUB; WB_EN <= 1; end
         `OP_AND: begin EXE_CMD <= `EXE_AND; WB_EN <= 1; end
@@ -23,7 +23,7 @@ module controller (opCode, branchEn, EXE_CMD, Branch_command, Is_Imm, ST_or_BNE,
         `OP_SLL: begin EXE_CMD <= `EXE_SLL; WB_EN <= 1; end
         `OP_SRA: begin EXE_CMD <= `EXE_SRA; WB_EN <= 1; end
         `OP_SRL: begin EXE_CMD <= `EXE_SRL; WB_EN <= 1; end
-        // I-type operations
+        // operations using an immediate value embedded in the instruction
         `OP_ADDI: begin EXE_CMD <= `EXE_ADD; WB_EN <= 1; Is_Imm <= 1; end
         `OP_SUBI: begin EXE_CMD <= `EXE_SUB; WB_EN <= 1; Is_Imm <= 1; end
         // memory operations
@@ -38,6 +38,7 @@ module controller (opCode, branchEn, EXE_CMD, Branch_command, Is_Imm, ST_or_BNE,
     end
 
     else if (hazard_detected ==  1) begin
+      // preventing any writes to the register file or the memory
       {EXE_CMD, WB_EN, MEM_W_EN} <= 0;
     end
   end

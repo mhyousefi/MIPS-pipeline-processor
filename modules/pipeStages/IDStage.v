@@ -36,14 +36,14 @@ module IDStage (clk, rst, hazard_detected_in, is_imm_out, ST_or_BNE_out, instruc
     .out(src2_reg_file)
   );
 
-  mux #(.LENGTH(`WORD_LEN)) mux_val2 ( // determins whether val2 is from the reg file of the immediate value
+  mux #(.LENGTH(`WORD_LEN)) mux_val2 ( // determins whether val2 is from the reg file or the immediate value
     .in1(reg2),
     .in2(signExt2Mux),
     .sel(Is_Imm),
     .out(val2)
   );
 
-  mux #(.LENGTH(`REG_FILE_ADDR_LEN)) mux_src2_forw ( // determins the register source 2 for forwarding
+  mux #(.LENGTH(`REG_FILE_ADDR_LEN)) mux_src2_forw ( // determins the value of register source 2 for forwarding
     .in1(instruction[15:11]), // src2 = instruction[15:11]
     .in2(5'd0),
     .sel(Is_Imm),
